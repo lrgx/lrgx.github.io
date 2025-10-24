@@ -5,29 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>健康评估系统</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
-        .container { max-width: 800px; margin: 40px auto; padding: 30px; background: #fff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #2c3e50; margin-bottom: 30px; font-size: 28px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; color: #34495e; }
-        input, select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: all 0.3s; }
-        input:focus, select:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 3px rgba(52,152,219,0.2); }
-        button { width: 100%; padding: 14px; background: #3498db; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; transition: background 0.3s; margin-top: 20px; }
-        button:hover { background: #2980b9; }
-        button:disabled { background: #95a5a6; cursor: not-allowed; }
-        .result { margin-top: 30px; padding: 20px; border-radius: 12px; display: none; }
-        .low { background: #d5f5e3; border-left: 6px solid #27ae60; }
-        .medium { background: #fef9e7; border-left: 6px solid #f39c12; }
-        .high { background: #fadbd8; border-left: 6px solid #e74c3c; }
-        .result h3 { margin-bottom: 15px; font-size: 22px; }
-        .bmi { font-size: 18px; margin: 10px 0; font-weight: 600; }
-        .rec-list { margin-top: 15px; }
-        .rec-list li { margin: 8px 0; padding-left: 5px; }
-        .loading { text-align: center; margin: 20px 0; color: #7f8c8d; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .footer { text-align: center; margin-top: 40px; color: #95a5a6; font-size: 14px; }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',sans-serif;background:#f5f7fa;color:#333;line-height:1.6}
+        .container{max-width:800px;margin:40px auto;padding:30px;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.1)}
+        h1{text-align:center;color:#2c3e50;margin-bottom:30px;font-size:28px}
+        .form-group{margin-bottom:20px}
+        label{display:block;margin-bottom:8px;font-weight:600;color:#34495e}
+        input,select{width:100%;padding:12px;border:2px solid #ddd;border-radius:8px;font-size:16px;transition:all .3s}
+        input:focus,select:focus{outline:none;border-color:#3498db;box-shadow:0 0 0 3px rgba(52,152,219,0.2)}
+        button{width:100%;padding:14px;background:#3498db;color:white;border:none;border-radius:8px;font-size:18px;font-weight:600;cursor:pointer;transition:background .3s;margin-top:20px}
+        button:hover{background:#2980b9}
+        button:disabled{background:#95a5a6;cursor:not-allowed}
+        .result{margin-top:30px;padding:20px;border-radius:12px;display:none}
+        .low{background:#d5f5e3;border-left:6px solid #27ae60}
+        .medium{background:#fef9e7;border-left:6px solid #f39c12}
+        .high{background:#fadbd8;border-left:6px solid #e74c3c}
+        .result h3{margin-bottom:15px;font-size:22px}
+        .bmi{font-size:18px;margin:10px 0;font-weight:600}
+        .rec-list{margin-top:15px}
+        .rec-list li{margin:8px 0;padding-left:5px}
+        .loading{text-align:center;margin:20px 0;color:#7f8c8d}
+        .spinner{border:4px solid #f3f3f3;border-top:4px solid #3498db;border-radius:50%;width:30px;height:30px;animation:spin 1s linear infinite;margin:0 auto}
+        @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+        .footer{text-align:center;margin-top:40px;color:#95a5a6;font-size:14px}
     </style>
 </head>
 <body>
@@ -90,60 +90,14 @@
     </div>
 
     <script>
-        const form = document.getElementById('healthForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const loading = document.getElementById('loading');
-        const result = document.getElementById('result');
-        const riskTitle = document.getElementById('riskTitle');
-        const bmiValue = document.getElementById('bmiValue');
-        const recList = document.getElementById('recommendations');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            submitBtn.disabled = true;
-            loading.style.display = 'block';
-            result.style.display = 'none';
-
-            const data = {
-                age: parseInt(document.getElementById('age').value),
-                weight: parseFloat(document.getElementById('weight').value),
-                height: parseFloat(document.getElementById('height').value),
-                exercise: parseFloat(document.getElementById('exercise').value),
-                sleep: parseFloat(document.getElementById('sleep').value),
-                stress: parseInt(document.getElementById('stress').value),
-                alcohol: parseInt(document.getElementById('alcohol').value),
-                smoking: document.getElementById('smoking').value === 'true'
-            };
-
-            try {
-                const response = await fetch('http://luoriguixi.top:8000/assess', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                if (!response.ok) throw new Error('评估失败');
-
-                const res = await response.json();
-
-                result.className = `result ${res.risk_level === 0 ? 'low' : res.risk_level === 1 ? 'medium' : 'high'}`;
-                riskTitle.textContent = `${res.risk_name}`;
-                bmiValue.textContent = `BMI: ${res.bmi} kg/m²`;
-                recList.innerHTML = '';
-                res.recommendations.forEach(rec => {
-                    const li = document.createElement('li');
-                    li.textContent = rec;
-                    recList.appendChild(li);
-                });
-
-                result.style.display = 'block';
-            } catch (error) {
-                alert('评估出错: ' + error.message);
-            } finally {
-                loading.style.display = 'none';
-                submitBtn.disabled = false;
-            }
-        });
+        const form=document.getElementById('healthForm'),submitBtn=document.getElementById('submitBtn'),loading=document.getElementById('loading'),result=document.getElementById('result'),riskTitle=document.getElementById('riskTitle'),bmiValue=document.getElementById('bmiValue'),recList=document.getElementById('recommendations');
+        form.addEventListener('submit',async e=>{e.preventDefault();submitBtn.disabled=true;loading.style.display='block';result.style.display='none';
+            const data={age:parseInt(document.getElementById('age').value),weight:parseFloat(document.getElementById('weight').value),height:parseFloat(document.getElementById('height').value),exercise:parseFloat(document.getElementById('exercise').value),sleep:parseFloat(document.getElementById('sleep').value),stress:parseInt(document.getElementById('stress').value),alcohol:parseInt(document.getElementById('alcohol').value),smoking:document.getElementById('smoking').value==='true'};
+            try{const response=await fetch('http://luoriguixi.top:8000/assess',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+                if(!response.ok)throw new Error('评估失败');const res=await response.json();
+                result.className=`result ${res.risk_level===0?'low':res.risk_level===1?'medium':'high'}`;
+                riskTitle.textContent=res.risk_name;bmiValue.textContent=`BMI: ${res.bmi} kg/m²`;recList.innerHTML='';res.recommendations.forEach(rec=>{const li=document.createElement('li');li.textContent=rec;recList.appendChild(li);});
+                result.style.display='block';}catch(error){alert('评估出错: '+error.message);}finally{loading.style.display='none';submitBtn.disabled=false;}});
     </script>
 </body>
 </html>
